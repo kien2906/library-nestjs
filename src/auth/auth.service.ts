@@ -1,4 +1,4 @@
-import { BadRequestException, ConflictException, Injectable, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, ConflictException, Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import { RegisterDto } from './dto/register.dto.js';
 import { UpdateAuthDto } from './dto/update-auth.dto.js';
 import { Repository } from 'typeorm';
@@ -7,11 +7,13 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Role } from '../common/role.enum.js';
 import * as bcrypt from 'bcrypt';
 import { LoginDto } from './dto/login.dto.js';
+import { JwtService } from '@nestjs/jwt';
 @Injectable()
 export class AuthService {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
+    private readonly jwtService: JwtService
   ) { }
 
   async register(registerDto: RegisterDto) {
@@ -66,22 +68,35 @@ export class AuthService {
     });
 
     if (!exists) {
-      throw new UnauthorizedException("Email or password incorrect");
+         throw new BadRequestException("Email does not exist.");
+    }
+
+    if (!exists.isActive) {
+      throw new BadRequestException("Account not active")
     }
 
     const isMatch = await bcrypt.compare(password, exists.password)
 
     if (!isMatch) {
-      throw new UnauthorizedException("Email or password incorrect");
+      throw new BadRequestException("Invaild password");
     }
 
 
+    // Tạo token 
+    const jwtPayload = {
+      sub: exists.id,
+      email: exists.email,
+      role: exists.role
+    }
+
+    const jwtToken = this.jwtService.sign(jwtPayload)
+
     return {
       message: "Login successfully",
+      accessToken: jwtToken,
       user: {
         id: exists.id,
-        email: exists.email,
-        role: exists.role
+        fullname: exists.fullName
       }
     }
 
