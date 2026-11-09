@@ -31,6 +31,10 @@ export class User {
 
   @OneToMany(()=>BorrowBook, (borrowBook) =>borrowBook.user)
   borrowBooks : BorrowBook[];
+
+
+  @Column({nullable :true})
+  avatar : string
 }
 
 
