@@ -1,5 +1,6 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { BorrowBook } from '../../borrow_books/entities/borrow_book.entity.js';
+import { IsEmail } from 'class-validator';
 
 @Entity('users')
 export class User {
@@ -8,10 +9,11 @@ export class User {
   @Column()
   fullName: string;
 
-  @Column()
+  @Column({ nullable: true })
   phone: string;
 
   @Column({ unique: true, nullable: true })
+  @IsEmail()
   email: string;
 
   @Column({ nullable: true })
@@ -29,12 +31,12 @@ export class User {
   @Column()
   updateAt: Date;
 
-  @OneToMany(()=>BorrowBook, (borrowBook) =>borrowBook.user)
-  borrowBooks : BorrowBook[];
+  @OneToMany(() => BorrowBook, (borrowBook) => borrowBook.user)
+  borrowBooks: BorrowBook[];
 
 
-  @Column({nullable :true})
-  avatar : string
+  @Column({ nullable: true })
+  avatar: string
 }
 
 

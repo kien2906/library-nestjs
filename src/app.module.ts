@@ -11,6 +11,7 @@ import { Category } from './categories/entities/category.entity.js';
 import { Book } from './books/entities/book.entity.js';
 import { BorrowBook } from './borrow_books/entities/borrow_book.entity.js';
 import { AuthModule } from './auth/auth.module.js';
+
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -28,7 +29,7 @@ import { AuthModule } from './auth/auth.module.js';
         username: configService.get<string>('DB_USERNAME'),
         password: configService.get<string>('DB_PASSWORD'),
         database: configService.get<string>('DB_DATABASE'),
-        entities: [User, Category, Book,BorrowBook], //chỉ định entity ở đây
+        entities: [User, Category, Book, BorrowBook], //chỉ định entity ở đây
         synchronize: true, // tự động tạo bảng từ entity (chỉ dùng ở local)
         logging: true, // tự động chạy log sql query chỉ dùng ở loc/dev
       }),
@@ -45,4 +46,4 @@ import { AuthModule } from './auth/auth.module.js';
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule { }

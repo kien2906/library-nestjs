@@ -4,7 +4,7 @@ import { UpdateAuthDto } from './dto/update-auth.dto.js';
 import { Repository } from 'typeorm';
 import { User } from '../users/entities/user.entity.js';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Role } from '../common/role.enum.js';
+import { Roles } from '../common/role.enum.js';
 import * as bcrypt from 'bcrypt';
 import { LoginDto } from './dto/login.dto.js';
 import { JwtService } from '@nestjs/jwt';
@@ -40,7 +40,7 @@ export class AuthService {
       fullName,
       phone,
       isActive: true,
-      role: Role.USER,
+      role: Roles.USER,
       createAt: new Date(),
       updateAt: new Date(),
     });
