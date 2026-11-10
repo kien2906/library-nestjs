@@ -104,7 +104,7 @@ export class UsersController {
 
   }
 
-  @Post("create-users")
+  @Post("admin/create-users")
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Role(Roles.ADMIN)
   createAccountAdmin(@Body() createAccountAdmin: createAccountByAdmin) {
