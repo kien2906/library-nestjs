@@ -1,4 +1,4 @@
-import { BadRequestException, ConflictException, Injectable } from '@nestjs/common';
+import { BadRequestException, ConflictException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto.js';
 import { UpdateUserDto } from './dto/update-user.dto.js';
 import { Repository } from 'typeorm';
@@ -12,6 +12,7 @@ import { createAccountByAdmin } from './dto/create-user-by-admin.dto.js';
 import { Role } from '../auth/decorators/roles.decorator.js';
 import { Roles } from '../common/role.enum.js';
 import { updateAccountUserByAdminDTO } from './dto/admin.updateAccount.js';
+import { toggleActiceDTO } from './dto/toggle-active.js';
 @Injectable()
 export class UsersService {
 
@@ -22,38 +23,57 @@ export class UsersService {
   ) { }
 
 
+  async getUserId(id: string) {
+    const user = await this.userRepository.findOne({
+      where: { id }
+    });
 
-  async getUsers() {
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
 
-    const listUsers = await this.userRepository.find({
+    if (user.role !== Roles.USER) {
+      throw new ForbiddenException('This account is not a USER');
+    }
+
+    return user
+  }
+
+  async getUsers(queryParams: any) {
+
+
+    const where: any = {};
+    if (queryParams.email?.trim()) {
+      where.email = queryParams.email.trim();
+    }
+
+    if (queryParams.phone?.trim()) {
+      where.phone = queryParams.phone.trim();
+    }
+
+    if (queryParams.role?.trim()) {
+      where.role = queryParams.role.trim();
+    }
+
+
+
+    const users = await this.userRepository.find({
       where: {
-        role: "USER"
+        ...where,
+        role: Roles.USER
       },
 
       select: {
         id: true,
         fullName: true,
-        phone: true,
         email: true,
+        phone: true,
         role: true,
         isActive: true,
-        createAt: true,
-        avatar: true
       }
-    });
+    })
 
-    if (listUsers.length === 0) {
-      return {
-        message: "List Users successfully",
-        data: []
-      }
-    }
-
-
-    return {
-      message: "List Users successfully",
-      data: listUsers
-    }
+    return users;
   }
 
 
@@ -294,4 +314,49 @@ export class UsersService {
       message: "Update profile user Successfully"
     }
   }
+
+
+  async deleteUserByAdmin(id: string) {
+    const user = await this.userRepository.findOne({
+      where: {
+        id: id,
+      }
+    })
+
+    if (!user) {
+      throw new BadRequestException("User not found")
+    }
+    // remove này phải truyền 1 entity mới xóa được 
+    await this.userRepository.remove(user);
+
+    return {
+      message: "Delete user Successfully"
+    }
+
+  }
+
+
+  async toggleActive(id: string, toggleActive: toggleActiceDTO) {
+
+    const user = await this.userRepository.findOne({
+      where: {
+        id: id,
+      }
+    })
+
+    if (!user) {
+      throw new BadRequestException("User not found")
+    }
+
+    user.isActive = toggleActive.isActive
+    user.updateAt = new Date()
+
+    await this.userRepository.save(user);
+
+    return {
+      message: "Update status user Successfully"
+    }
+
+  }
+
 }
