@@ -1,5 +1,5 @@
 import 'multer'
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req, UseInterceptors, UploadedFile, ParseUUIDPipe } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req, UseInterceptors, UploadedFile, ParseUUIDPipe, Query } from '@nestjs/common';
 import { UsersService } from './users.service.js';
 import { UpdateUserDto } from './dto/update-user.dto.js';
 import { Role } from '../auth/decorators/roles.decorator.js';
@@ -15,17 +15,12 @@ import { diskStorage } from 'multer';
 import { AdminChangePasswordDto } from './dto/admin.change-password.js';
 import { createAccountByAdmin } from './dto/create-user-by-admin.dto.js';
 import { updateAccountUserByAdminDTO } from './dto/admin.updateAccount.js';
+import { toggleActiceDTO } from './dto/toggle-active.js';
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) { }
 
 
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Role(Roles.ADMIN)
-  @Get()
-  getUser() {
-    return this.usersService.getUsers()
-  }
 
 
   @Get('profile')
@@ -67,8 +62,43 @@ export class UsersController {
     return this.usersService.changeAvatar(user, file)
   }
 
+
+
+  // API admin
+
+
+  @Get(':id')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Role(Roles.ADMIN, Roles.LIBRARIAN)
+  getUserByid(@Param('id', ParseUUIDPipe) id: string) {
+    return this.usersService.getUserId(id)
+  }
+
+  @Get()
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Role(Roles.ADMIN, Roles.LIBRARIAN)
+  getUser(@Query('email') email: string, @Query('phone') phone: string, @Query('role') role: string) {
+
+    const queryParams = {
+      email,
+      phone,
+      role
+
+    }
+
+    return this.usersService.getUsers(queryParams)
+  }
+
+
+  @Patch(":id/toggle-change")
+   @UseGuards(JwtAuthGuard, RolesGuard)
+  @Role(Roles.ADMIN)
+  toggleChangeActive(@Param('id',ParseUUIDPipe)id : string , @Body() toggleActive :toggleActiceDTO){
+    return this.usersService.toggleActive(id,toggleActive)
+  }
+
   @Patch('admin/updateUsers/:id')
-  @UseGuards(JwtAuthGuard,RolesGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Role(Roles.ADMIN)
   @UseInterceptors(FileInterceptor("avatar", {
     storage: diskStorage({
@@ -109,6 +139,13 @@ export class UsersController {
   @Role(Roles.ADMIN)
   createAccountAdmin(@Body() createAccountAdmin: createAccountByAdmin) {
     return this.usersService.createAccountByAdmin(createAccountAdmin)
+  }
+
+  @Delete(":id")
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Role(Roles.ADMIN)
+  deleteUser(@Param('id',ParseUUIDPipe) id :string) {
+      return this.usersService.deleteUserByAdmin(id)
   }
 
 

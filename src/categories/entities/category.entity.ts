@@ -6,17 +6,16 @@ export class Category {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column()
+  @Column({ nullable: false })
   name: string;
 
   @OneToMany(() => Book, (books) => books.category)
   books: any[];
 
 
-  
   @Column()
   createdAt: Date;
 
   @Column()
-  updateAt: string;
+  updateAt: Date;
 }
