@@ -91,10 +91,10 @@ export class UsersController {
 
 
   @Patch(":id/toggle-change")
-   @UseGuards(JwtAuthGuard, RolesGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Role(Roles.ADMIN)
-  toggleChangeActive(@Param('id',ParseUUIDPipe)id : string , @Body() toggleActive :toggleActiceDTO){
-    return this.usersService.toggleActive(id,toggleActive)
+  toggleChangeActive(@Param('id', ParseUUIDPipe) id: string, @Body() toggleActive: toggleActiceDTO) {
+    return this.usersService.toggleActive(id, toggleActive)
   }
 
   @Patch('admin/updateUsers/:id')
@@ -144,8 +144,8 @@ export class UsersController {
   @Delete(":id")
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Role(Roles.ADMIN)
-  deleteUser(@Param('id',ParseUUIDPipe) id :string) {
-      return this.usersService.deleteUserByAdmin(id)
+  deleteUser(@Param('id', ParseUUIDPipe) id: string) {
+    return this.usersService.deleteUserByAdmin(id)
   }
 
 

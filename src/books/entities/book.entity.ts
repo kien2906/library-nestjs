@@ -10,7 +10,7 @@ import { BorrowBook } from '../../borrow_books/entities/borrow_book.entity.js';
 
 @Entity('books')
 export class Book {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn("uuid")
   id: string;
 
   @Column()
