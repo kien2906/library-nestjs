@@ -11,6 +11,7 @@ import { Category } from './categories/entities/category.entity.js';
 import { Book } from './books/entities/book.entity.js';
 import { BorrowBook } from './borrow_books/entities/borrow_book.entity.js';
 import { AuthModule } from './auth/auth.module.js';
+import { BorrowBooksModule } from './borrow_books/borrow_books.module.js';
 
 @Module({
   imports: [
@@ -34,7 +35,7 @@ import { AuthModule } from './auth/auth.module.js';
         logging: true, // tự động chạy log sql query chỉ dùng ở loc/dev
       }),
     }),
-
+    BorrowBooksModule,
     UsersModule,
 
     CategoriesModule,

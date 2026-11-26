@@ -10,7 +10,7 @@ import { BorrowBook } from '../../borrow_books/entities/borrow_book.entity.js';
 
 @Entity('books')
 export class Book {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn("uuid")
   id: string;
 
   @Column()
@@ -33,4 +33,7 @@ export class Book {
 
   @OneToMany(() => BorrowBook, (borrowBook) => borrowBook.book)
   borrowBooks: BorrowBook[];
+
+  @Column()
+  availableNumber: number;
 }

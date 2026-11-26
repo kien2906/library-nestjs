@@ -15,13 +15,19 @@ async function bootstrap() {
   const __filename = fileURLToPath(import.meta.url);
   const __dirname = dirname(__filename);
 
+  app.enableCors({
+    origin: 'http://localhost:3000',
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+  });
+
   const uploadPath = join(__dirname, '..', 'uploads');
 
   app.useStaticAssets(uploadPath, {
     prefix: '/uploads/',
   });
 
-  app.useGlobalPipes( new ValidationPipe())
+  app.useGlobalPipes(new ValidationPipe())
   await app.listen(process.env.PORT ?? 5000);
 }
 await bootstrap();

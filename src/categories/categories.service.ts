@@ -14,41 +14,10 @@ export class CategoriesService {
     private readonly categoryRepository: Repository<Category>) { }
 
 
-
-
-  async create(createCategoryDto: CreateCategoryDto) {
-
-    const category = await this.categoryRepository.findOne({
-      where: {
-        name: createCategoryDto.name
-      }
-    })
-
-    if (category) {
-      throw new BadRequestException("Category exists")
-    }
- 
-    const newCategory = this.categoryRepository.create({
-      name: createCategoryDto.name,
-      createdAt: new Date(),
-      updateAt: new Date()
-    });
-
-    this.categoryRepository.save(newCategory)
-
-    return {
-      message: "Create category successfully",
-      newCategory
-    }
-
-
-
-  }
-
   findAll() {
     return this.categoryRepository.find();
   }
-
+  // =======================
   async findOne(id: string) {
     const category = await this.categoryRepository.findOne({
       where: {
@@ -86,10 +55,40 @@ export class CategoriesService {
     }
 
     category.name = updateCategoryDto.name || category.name
-     this.categoryRepository.save(category)
+    this.categoryRepository.save(category)
     return {
       message: "Update Category successfully",
       category
+    }
+
+
+
+  }
+
+
+  async create(createCategoryDto: CreateCategoryDto) {
+
+    const category = await this.categoryRepository.findOne({
+      where: {
+        name: createCategoryDto.name
+      }
+    })
+
+    if (category) {
+      throw new BadRequestException("Category exists")
+    }
+
+    const newCategory = this.categoryRepository.create({
+      name: createCategoryDto.name,
+      createdAt: new Date(),
+      updateAt: new Date()
+    });
+
+    this.categoryRepository.save(newCategory)
+
+    return {
+      message: "Create category successfully",
+      newCategory
     }
 
 
@@ -108,7 +107,7 @@ export class CategoriesService {
       throw new NotFoundException("category not found")
     }
     // delete là xóa trực tiếp cần truyền id 
-     await this.categoryRepository.delete(id)
+    await this.categoryRepository.delete(id)
     return {
       message: "Delete Category successfully"
 
