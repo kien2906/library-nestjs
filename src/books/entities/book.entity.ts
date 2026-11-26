@@ -33,4 +33,7 @@ export class Book {
 
   @OneToMany(() => BorrowBook, (borrowBook) => borrowBook.book)
   borrowBooks: BorrowBook[];
+
+  @Column()
+  availableNumber: number;
 }

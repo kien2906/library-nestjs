@@ -45,12 +45,12 @@ export class BooksService {
     return this.bookRepository.save(book)
   }
 
-  findAll(queryDTO: QueryDTO) {
+  async findAll(queryDTO: QueryDTO) {
 
     const { page, limit, categoryId } = queryDTO
     const offset = (page - 1) * limit
 
-    return this.bookRepository.find({
+    const [book, total] = await this.bookRepository.findAndCount({
       relations: {
         category: true
       },
@@ -62,7 +62,18 @@ export class BooksService {
       skip: offset,
       take: limit
     })
-}
+
+    return {
+      data: book,
+      metadata: {
+        totalItems: total,
+        itemCount: book.length,
+        itemsPerPage: limit,
+        totalPages: Math.ceil(total / limit),
+        currentPage: page
+      }
+    }
+  }
 
 
   async findOne(id: string) {

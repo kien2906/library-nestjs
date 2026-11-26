@@ -10,8 +10,8 @@ export class BorrowBook {
   @Column()
   borrow_date: Date;
 
-  @Column()
-  expect_return_date: Date;
+  @Column({ nullable: false })
+  expectReturnDate: Date;
 
   @Column()
   penalty_money: number;
@@ -19,8 +19,8 @@ export class BorrowBook {
   @Column()
   status: string;
 
-  @Column()
-  return_date: string;
+  @Column({ nullable: true })
+  returnDate: Date;
 
   @ManyToOne(() => User, (user) => user.borrowBooks)
   user: any;
