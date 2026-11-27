@@ -68,7 +68,7 @@ export class AuthService {
     });
 
     if (!exists) {
-         throw new BadRequestException("Email does not exist.");
+      throw new BadRequestException("Email does not exist.");
     }
 
     if (!exists.isActive) {
@@ -96,7 +96,8 @@ export class AuthService {
       accessToken: jwtToken,
       user: {
         id: exists.id,
-        fullname: exists.fullName
+        fullname: exists.fullName,
+        role : exists.role
       }
     }
 

@@ -33,6 +33,8 @@ import { BorrowBooksModule } from './borrow_books/borrow_books.module.js';
         entities: [User, Category, Book, BorrowBook], //chỉ định entity ở đây
         synchronize: true, // tự động tạo bảng từ entity (chỉ dùng ở local)
         logging: true, // tự động chạy log sql query chỉ dùng ở loc/dev
+
+        ssl: {},
       }),
     }),
     BorrowBooksModule,
